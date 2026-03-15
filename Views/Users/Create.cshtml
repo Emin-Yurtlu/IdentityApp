@@ -1,0 +1,51 @@
+﻿@model CreateViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
+                    <h3 class="mb-0 fw-bold">Yeni Kullanıcı Oluştur</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="UserName" class="form-control" placeholder="Kullanıcı Adı" />
+                            <label asp-for="UserName">Kullanıcı Adı</label>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                            <label asp-for="Email">E-posta Adresi</label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4 text-muted">
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Şifre" />
+                            <label asp-for="Password">Şifre</label>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Şifre Tekrar" />
+                            <label asp-for="ConfirmPassword">Şifre Tekrar</label>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+                                <i class="bi bi-person-plus-fill me-2"></i>Kaydet
+                            </button>
+                            <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none text-muted">Vazgeç ve Listeye Dön</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
