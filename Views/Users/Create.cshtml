@@ -9,7 +9,8 @@
                 </div>
                 <div class="card-body p-4">
                     <form asp-action="Create" method="post">
-                        
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="form-floating mb-3">
                             <input asp-for="UserName" class="form-control" placeholder="Kullanıcı Adı" />
                             <label asp-for="UserName">Kullanıcı Adı</label>
