@@ -31,7 +31,7 @@ namespace IdentityApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new AppUser { UserName = model.Email, Email = model.Email , FullName=model.FullName};
+                var user = new AppUser { UserName = model.Email, Email = model.Email, FullName = model.FullName };
 
                 IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 
@@ -48,8 +48,30 @@ namespace IdentityApp.Controllers
 
             }
 
-              return View(model);
-            
+            return View(model);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id==null)
+            {
+                return RedirectToAction("Index");
+            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user!=null)
+            {
+                return View(new EditViewModel
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+
+                });
+               
+            }
+            return RedirectToAction("Index");
         }
     }
 }

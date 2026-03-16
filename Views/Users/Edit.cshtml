@@ -1,0 +1,64 @@
+﻿@model EditViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0 border-top border-primary border-4 rounded-3">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold text-dark">Edit User</h4>
+                        <p class="text-muted small">Update account details below.</p>
+                    </div>
+
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+                        <input name="Id" type="hidden" value="@Model.Id" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="FullName" class="form-control border-0 bg-light" placeholder="Full Name" />
+                            <label asp-for="FullName" class="text-muted">Full Name</label>
+                            <span asp-validation-for="FullName" class="text-danger x-small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control border-0 bg-light" placeholder="Email Address" />
+                            <label asp-for="Email" class="text-muted">Email Address</label>
+                            <span asp-validation-for="Email" class="text-danger x-small"></span>
+                        </div>
+
+                        <div class="py-2"><hr class="opacity-25"></div>
+
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Password" type="password" class="form-control border-0 bg-light" placeholder="Password" />
+                                    <label asp-for="Password">New Password</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control border-0 bg-light" placeholder="Confirm" />
+                                    <label asp-for="ConfirmPassword">Confirm</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary fw-semibold py-2 shadow-sm">
+                                Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-link btn-sm text-muted mt-2 text-decoration-none">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus { background-color: #fff !important; box-shadow: none; border: 1px solid #0d6efd !important; }
+    .x-small { font-size: 0.75rem; }
+</style>
