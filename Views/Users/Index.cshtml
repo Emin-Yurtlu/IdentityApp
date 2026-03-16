@@ -9,9 +9,9 @@
 <body>
 
     <div class="container mt-5">
-        <h2 class="mb-4">Sistemdeki Kullanıcılar</h2>
+      
 
-        @model IEnumerable<IdentityUser>
+        @model IEnumerable<AppUser>
 
         <a class="btn btn-primary" asp-action="Create">Create Users </a>
 		<br /><br />
@@ -22,7 +22,7 @@
                     <th>Id</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>İşlemler</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +30,7 @@
                 {
                     <tr>
                         <td>@user.Id</td>
-                        <td>@user.UserName</td>
+                        <td>@user.FullName</td>
                         <td>@user.Email</td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary btn-sm">Edit</a>
