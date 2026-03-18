@@ -73,5 +73,92 @@ namespace IdentityApp.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public async  Task<IActionResult> Edit(string id ,EditViewModel model)
+        {
+
+            if ((id != model.Id))
+            {
+                return RedirectToAction("Index");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user= await _userManager.FindByIdAsync(model.Id);
+                if (user != null)
+                {
+                    user.FullName = model.FullName;
+                    user.Email = model.Email;
+                    
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if(result.Succeeded && !string.IsNullOrEmpty(model.Password))
+                    {
+
+                    
+                        result = await _userManager.RemovePasswordAsync(user);
+
+                        if (result.Succeeded)
+                        {
+                            result = await _userManager.AddPasswordAsync(user, model.Password);
+                        }
+                    } 
+
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    foreach (IdentityError err in result.Errors)
+                    {
+                        ModelState.AddModelError("", err.Description);
+                    }
+                }
+
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null) return RedirectToAction("Index");
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return RedirectToAction("Index");
+
+            // AppUser'ı DeleteViewModel'e eşliyoruz (Mapping)
+            var model = new DeleteViewModel
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(DeleteViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+
+            if (user != null)
+            {
+                var result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                // Hata varsa model state'e ekle
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
     }
 }
