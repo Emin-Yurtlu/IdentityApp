@@ -25,7 +25,7 @@ namespace IdentityApp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(_roleManager.Roles);
         }
 
         [HttpPost]
