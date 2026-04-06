@@ -8,6 +8,7 @@ namespace IdentityApp.ViewModels
         [EmailAddress]
         public string? Email { get; set; }
 
+        [Required]
         public string Id { get; set; }
 
         public string? FullName { get; set; }

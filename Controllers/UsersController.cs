@@ -78,7 +78,7 @@ namespace IdentityApp.Controllers
         public async  Task<IActionResult> Edit(string id ,EditViewModel model)
         {
 
-            if ((id != model.Id))
+            if (id != model.Id)
             {
                 return RedirectToAction("Index");
             }
