@@ -8,7 +8,7 @@ namespace IdentityApp.ViewModels
       
         public string? FullName { get; set; }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [EmailAddress]
         public string? Email { get; set; } 
@@ -22,6 +22,8 @@ namespace IdentityApp.ViewModels
    
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Parola Eşleşmiyor")]
-        public string? ConfirmPassword { get; set; } 
+        public string? ConfirmPassword { get; set; }
+
+        public IList<string>? SelectedRoles { get; set; }
     }
 }

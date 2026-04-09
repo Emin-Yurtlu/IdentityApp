@@ -18,14 +18,14 @@ namespace IdentityApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var roles = await _roleManager.Roles.ToListAsync();
-            return View(roles);
+          
+            return View(_roleManager.Roles);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            return View(_roleManager.Roles);
+            return View();
         }
 
         [HttpPost]
