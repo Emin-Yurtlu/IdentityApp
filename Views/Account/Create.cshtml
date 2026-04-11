@@ -8,7 +8,7 @@
                     <h3 class="mb-0 fw-bold">Yeni Kullanıcı Oluştur</h3>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-action="Create" method="post">
+                    <form asp-controller="Account" asp-action="Create" method="post">
 
                         <div asp-validation-summary="All" class="text-danger"></div>
                          <div class="form-floating mb-3">
