@@ -11,15 +11,18 @@ namespace IdentityApp.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private IEmailSender _emailSender;
 
         public AccountController(
             UserManager<AppUser> userManager, 
             RoleManager<AppRole> roleManager, 
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager= signInManager;
+            _emailSender = emailSender;
         }
         [HttpGet]
         public IActionResult Login()
@@ -33,43 +36,43 @@ namespace IdentityApp.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
                 if (user != null)
                 {
+                    // 1. ADIM: Önce Email Doğrulama Kontrolü
+                    if (!await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        ModelState.AddModelError("", "Lütfen email adresinizi doğrulayınız.");
+                        return View(model); // Burada hemen dönerek diğer kontrolleri atlıyoruz.
+                    }
+
+                    // 2. ADIM: Giriş İşlemi
+                    // Önceki oturumları temizle
                     await _signInManager.SignOutAsync();
 
-                    if(await _userManager.IsEmailConfirmedAsync(user)){ 
-                        
-                        ModelState.AddModelError("", "Lütfen email adresinizi doğrulayınız.");
-                        return View(model);
-                    }
+                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
 
-                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true );
-
-                    if(result.Succeeded)
+                    if (result.Succeeded)
                     {
                         await _userManager.ResetAccessFailedCountAsync(user);
-                        await _userManager.SetLockoutEndDateAsync(user, null);
                         return RedirectToAction("Index", "Home");
                     }
-                    else if (result.IsLockedOut)
+
+                    if (result.IsLockedOut)
                     {
-                        ModelState.AddModelError("", "Hesabınız bir süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
+                        ModelState.AddModelError("", "Hesabınız kilitlendi.");
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Hatalı emil ya da parola.");
+                        ModelState.AddModelError("", "Hatalı email ya da parola.");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Hatalı emil ya da parola.");
+                    ModelState.AddModelError("", "Hatalı email ya da parola.");
                 }
-                   
-                
-               
             }
             return View(model);
-
         }
 
         [HttpGet]
@@ -97,7 +100,11 @@ namespace IdentityApp.Controllers
                 {
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);   
                     var url= Url.Action("ConfirmEmail", "Account", new { user.Id, token });
-                    TempData["Success"] = "Kayıt başarılı! Lütfen email adresinize gönderilen doğrulama linkine tıklayarak hesabınızı doğrulayınız.";
+
+
+                    await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"Lütfen email hesabınızı onaylamak ıcın linke <a href='https://localhost:7244{url}'>tıklayınız.</a>");
+
+                    TempData["message"] = "Kayıt başarılı! Lütfen email adresinize gönderilen doğrulama linkine tıklayarak hesabınızı doğrulayınız.";
                     return RedirectToAction("Login","Account");
                 }
 
@@ -115,7 +122,7 @@ namespace IdentityApp.Controllers
         {
             if(Id == null || token == null)
             {
-                TempData["Error"] = "Geçersiz token veya kullanıcı ID'si.";
+                TempData["message"] = "Geçersiz token veya kullanıcı ID'si.";
                 return View();
             }
             var user = await _userManager.FindByIdAsync(Id);
@@ -124,16 +131,12 @@ namespace IdentityApp.Controllers
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
-                    TempData["Success"] = "Email adresiniz başarıyla doğrulandı.";
+                    TempData["message"] = "Email adresiniz başarıyla doğrulandı.";
                     return View();
                 }
-                else
-                {
-                    TempData["Error"] = "Email doğrulama başarısız oldu.";
-                    return View();
-                }
+               
             }
-            TempData["Error"] = "Kullanıcı bulunamadı.";
+            TempData["message"] = "Kullanıcı bulunamadı.";
             return View();
         }
     }
