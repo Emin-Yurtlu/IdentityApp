@@ -1,14 +1,16 @@
 ﻿using IdentityApp.Models;
 using IdentityApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApp.Controllers
 {
+
+    [Authorize(Policy = "EsnekAdmin")]
     public class UsersController : Controller
     {
-
         private UserManager<AppUser> _userManager;
         private RoleManager<AppRole> _roleManager;
 
@@ -20,6 +22,7 @@ namespace IdentityApp.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+           
             return View(_userManager.Users);
         }
 
@@ -140,6 +143,7 @@ namespace IdentityApp.Controllers
 
             return View(model);
         }
+      
 
     }
 }

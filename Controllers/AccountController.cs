@@ -1,5 +1,6 @@
 ﻿using IdentityApp.Models;
 using IdentityApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,14 +15,14 @@ namespace IdentityApp.Controllers
         private IEmailSender _emailSender;
 
         public AccountController(
-            UserManager<AppUser> userManager, 
-            RoleManager<AppRole> roleManager, 
+            UserManager<AppUser> userManager,
+            RoleManager<AppRole> roleManager,
             SignInManager<AppUser> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _signInManager= signInManager;
+            _signInManager = signInManager;
             _emailSender = emailSender;
         }
         [HttpGet]
@@ -98,14 +99,14 @@ namespace IdentityApp.Controllers
 
                 if (result.Succeeded)
                 {
-                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);   
-                    var url= Url.Action("ConfirmEmail", "Account", new { user.Id, token });
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var url = Url.Action("ConfirmEmail", "Account", new { user.Id, token });
 
 
                     await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"Lütfen email hesabınızı onaylamak ıcın linke <a href='https://localhost:7244{url}'>tıklayınız.</a>");
 
                     TempData["message"] = "Kayıt başarılı! Lütfen email adresinize gönderilen doğrulama linkine tıklayarak hesabınızı doğrulayınız.";
-                    return RedirectToAction("Login","Account");
+                    return RedirectToAction("Login", "Account");
                 }
 
                 foreach (IdentityError err in result.Errors)
@@ -118,9 +119,10 @@ namespace IdentityApp.Controllers
             return View(model);
 
         }
-        public async Task<IActionResult> ConfirmEmail(string Id, string token) 
+
+        public async Task<IActionResult> ConfirmEmail(string Id, string token)
         {
-            if(Id == null || token == null)
+            if (Id == null || token == null)
             {
                 TempData["message"] = "Geçersiz token veya kullanıcı ID'si.";
                 return View();
@@ -134,10 +136,92 @@ namespace IdentityApp.Controllers
                     TempData["message"] = "Email adresiniz başarıyla doğrulandı.";
                     return View();
                 }
-               
+
             }
             TempData["message"] = "Kullanıcı bulunamadı.";
             return View();
         }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FogotPassword(string Email)
+        {
+
+            if (string.IsNullOrEmpty(Email))
+            {
+                TempData["message"] = "Lütfen email adresinizi giriniz.";
+                return View();
+            }
+
+            var user = await _userManager.FindByEmailAsync(Email);
+            if (user == null)
+            {
+                TempData["message"] = "Bu email adresine sahip bir kullanıcı bulunamadı.";
+                return View();
+
+            }
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var url = Url.Action("ResetPassword", "Account", new { userId = user.Id, token = code });
+            await _emailSender.SendEmailAsync(user.Email, "Şifre Sıfırlama", $"Şifrenizi sıfırlamak için linke <a href='https://localhost:7244{url}'>tıklayınız.</a>");
+
+            TempData["message"] = "Şifre sıfırlama linki email adresinize gönderildi.";
+            return View();
+        }
+
+
+        public IActionResult ResetPassword(string Id, string token)
+        {
+
+            if (Id == null || token == null)
+            {
+                return RedirectToAction("Login");
+            }
+            var model = new ResetPasswordModel { Token = token };
+            return View(model);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string Id, ResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if(user == null)
+                {
+                   
+                    TempData["message"] = "Bu email adresine sahip bir kullanıcı bulunamadı.";
+                    return View(model);
+                }
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    TempData["message"] = "Şifreniz başarıyla sıfırlandı.";
+                    return RedirectToAction("Login");
+                }
+
+                foreach (IdentityError err in result.Errors)
+                {
+                    ModelState.AddModelError("", err.Description);
+                }
+            }
+            return View(model);
+        }
     }
 }
+
+
+
+      

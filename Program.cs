@@ -20,7 +20,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:DataBase"]));
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
 
-
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("EsnekAdmin", policy =>
+        policy.RequireAssertion(context =>
+            context.User.Claims.Any(c =>
+                c.Type == System.Security.Claims.ClaimTypes.Role &&
+                c.Value.Trim().ToLower() == "admin")));
+});
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
