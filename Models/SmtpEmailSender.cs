@@ -11,7 +11,7 @@ namespace IdentityApp.Models
         private string? _userName;
         private string? _password;
 
-        public SmtpEmailSender( string? host,int port ,bool enabledSSL,string? userName,string? password)
+        public SmtpEmailSender(string? host, int port, bool enabledSSL, string? userName, string? password)
         {
             _host = host;
             _port = port;
@@ -30,13 +30,7 @@ namespace IdentityApp.Models
                 EnableSsl = _enabledSSL
             };
 
-            return client.SendMailAsync(new MailMessage(_userName ?? "", email, subject, message) {IsBodyHtml = true});
-            
-            
+            return client.SendMailAsync(new MailMessage(_userName ?? "", email, subject, message) { IsBodyHtml = true });
         }
     }
-    
 }
-       
-        
-    

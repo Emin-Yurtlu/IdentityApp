@@ -1,88 +1,66 @@
 ﻿@model AppRole
 
+@{
+    ViewData["Title"] = "Rol Düzenle";
+}
+
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-sm border-0 border-top border-primary border-4 rounded-3">
-                <div class="card-body p-4 p-md-5">
-                    
-                    <div class="text-center mb-4">
-                        <h4 class="fw-bold text-dark">Edit Role</h4>
-                        <p class="text-muted small">Update the role name and permissions</p>
-                    </div>
+    <div class="card shadow-sm border-0 mx-auto mb-4" style="max-width: 500px; border-radius: 12px;">
+        <div class="card-body p-4 text-center">
+            <h4 class="fw-bold text-primary mb-1">Rol Düzenle</h4>
+            <p class="text-muted small mb-4">Rol ismini güncelleyebilirsiniz</p>
 
-                    <form asp-action="Edit" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
-                        
-                        @* ID bilgisini güvenli bir şekilde taşımak için *@
-                        <input type="hidden" asp-for="Id" />
+            <form asp-action="Edit" method="post" class="text-start">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+                <input type="hidden" asp-for="Id" />
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Name" class="form-control border-0 bg-light" placeholder="Role Name" />
-                            <label asp-for="Name">Role Name</label>
-                            <span asp-validation-for="Name" class="text-danger x-small"></span>
-                        </div>
-
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary fw-semibold py-2 shadow-sm">
-                                <i class="bi bi-check2-circle me-1"></i> Save Changes
-                            </button>
-                            <a asp-action="Index" class="btn btn-outline-light btn-sm text-muted border-0">
-                                <i class="bi bi-arrow-left"></i> Back to List
-                            </a>
-                        </div>
-                    </form>
-
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label small fw-semibold">Rol Adı</label>
+                    <input asp-for="Name" class="form-control form-control-sm bg-light" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
                 </div>
-            </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill">Değişiklikleri Kaydet</button>
+                    <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none text-muted">Vazgeç</a>
+                </div>
+            </form>
         </div>
     </div>
-</div>
-  <table class="table table-sm table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                   <th style="width:80px;"></th>
-                </tr>
-            </thead>
-            @if (ViewBag.users!=null)
-    {
-        @if(ViewBag.Users.Count==0)
-            {
-                <tr>
-                    <td colspan="3" class="text-center">User yok.</td>
-                </tr>
-			}
-			
-            
-                @foreach (var user in ViewBag.Users)
-                {
-                    <tr>
-                        <td>@user.Id</td>
-                        <td>@user.FullName</td>
-                          <td>@user.Email</td>
-                       
-                        <td>
-                           
-                               <a asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary btn-sm">Edit</a>
-							
-                        </td>
-                    </tr>
-                }
-    }
-            
-           
-        </table>
 
-<style>
-    .form-control:focus { 
-        background-color: #fff !important; 
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .10) !important; 
-        border: 1px solid #0d6efd !important; 
+    @if (ViewBag.users != null)
+    {
+        <div class="card shadow-sm border-0 mx-auto" style="max-width: 800px; border-radius: 12px;">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light small">
+                        <tr>
+                            <th class="ps-4">Ad Soyad</th>
+                            <th>E-Posta</th>
+                            <th class="text-end pe-4">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        @if (ViewBag.Users.Count == 0)
+                        {
+                            <tr><td colspan="3" class="text-center py-4">Bu role ait kullanıcı bulunamadı.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <tr>
+                                    <td class="ps-4">@user.FullName</td>
+                                    <td>@user.Email</td>
+                                    <td class="text-end pe-4">
+                                        <a asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-outline-primary btn-sm rounded-pill py-0">Düzenle</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     }
-    .x-small { font-size: 0.75rem; }
-    /* Floating label için küçük bir düzeltme */
-    .form-floating > label { opacity: .7; }
-</style>
+</div>

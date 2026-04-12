@@ -1,91 +1,60 @@
 ﻿@model EditViewModel
 
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-sm border-0 border-top border-primary border-4 rounded-3">
-                <div class="card-body p-4 p-md-5">
-                    <div class="text-center mb-4">
-                        <h4 class="fw-bold text-dark">Edit User</h4>
-                        <p class="text-muted small">Update account details below.</p>
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px; border-radius: 12px;">
+        <div class="card-body p-4">
+            <h4 class="text-center fw-bold text-primary mb-4">Kullanıcıyı Güncelle</h4>
+
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label small fw-semibold">Ad Soyad</label>
+                    <input asp-for="FullName" class="form-control form-control-sm bg-light" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label small fw-semibold">E-Posta</label>
+                    <input asp-for="Email" class="form-control form-control-sm bg-light" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col">
+                        <label asp-for="Password" class="form-label small fw-semibold">Yeni Şifre</label>
+                        <input asp-for="Password" type="password" class="form-control form-control-sm bg-light" />
                     </div>
-
-                    <form asp-action="Edit" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
-                        <input name="Id" type="hidden" value="@Model.Id" />
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="FullName" class="form-control border-0 bg-light" placeholder="Full Name" />
-                            <label asp-for="FullName" class="text-muted">Full Name</label>
-                            <span asp-validation-for="FullName" class="text-danger x-small"></span>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="Email" class="form-control border-0 bg-light" placeholder="Email Address" />
-                            <label asp-for="Email" class="text-muted">Email Address</label>
-                            <span asp-validation-for="Email" class="text-danger x-small"></span>
-                        </div>
-
-                        <div class="py-2"><hr class="opacity-25"></div>
-
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input asp-for="Password" type="password" class="form-control border-0 bg-light" placeholder="Password" />
-                                    <label asp-for="Password">New Password</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input asp-for="ConfirmPassword" type="password" class="form-control border-0 bg-light" placeholder="Confirm" />
-                                    <label asp-for="ConfirmPassword">Confirm</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    <div class="card">
-
-                    <div class="card-header">
-                        Roller
+                    <div class="col">
+                        <label asp-for="ConfirmPassword" class="form-label small fw-semibold">Onay</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control form-control-sm bg-light" />
                     </div>
-                    <div class="card-body">
+                </div>
+
+                <div class="card border-0 bg-light mb-4" style="border-radius: 8px;">
+                    <div class="card-body py-2">
+                        <p class="small fw-bold mb-2">Roller</p>
                         @foreach (var role in ViewBag.Roles)
                         {
-                           <div class="form-check">
-                               <input type="checkbox"
-                                   class="form-check-input" 
-                                   name="SelectedRoles" 
-                                   value="@role"
-                                   id="@role"
-
-                                   if(Model.SelectedRoles!=null){
-                                          @(Model.SelectedRoles.Any(i=>i==role) ? "checked" : "")
-
-                                   }
-                                />
-                                   
-                               <label for="@role" class="form-check-label">@role</label>
-                           </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" name="SelectedRoles" value="@role" id="@role"
+                                @(Model.SelectedRoles != null && Model.SelectedRoles.Contains(role) ? "checked" : "") />
+                                <label for="@role" class="form-check-label small">@role</label>
+                            </div>
                         }
                     </div>
-                    </div>
-
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary fw-semibold py-2 shadow-sm">
-                                Save Changes
-                            </button>
-                            <a asp-action="Index" class="btn btn-link btn-sm text-muted mt-2 text-decoration-none">
-                                <i class="bi bi-arrow-left"></i> Back to List
-                            </a>
-                        </div>
-                    </form>
                 </div>
-            </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill">Değişiklikleri Kaydet</button>
+                    <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none text-muted">Listeye Dön</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-
-<style>
-    .form-control:focus { background-color: #fff !important; box-shadow: none; border: 1px solid #0d6efd !important; }
-    .x-small { font-size: 0.75rem; }
-</style>

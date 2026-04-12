@@ -1,49 +1,41 @@
-﻿@model IdentityApp.ViewModels.LoginViewModel
+﻿@model LoginViewModel
 
 @{
-    ViewData["Title"] = "Giriş Yap";
+    ViewData["Title"] = "Giriş";
 }
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-sm" style="max-width: 400px; width: 100%;">
-        
+<div class="container mt-5">
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 380px; border-radius: 12px;">
         <div class="card-body p-4">
-            <h4 class="text-center mb-4">Hoş Geldiniz</h4>
+            <h4 class="text-center fw-bold text-primary mb-4">Hoş Geldiniz</h4>
 
             <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
 
                 <div class="mb-3">
-                    <label asp-for="Email" class="form-label">E-posta</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <input asp-for="Email" type="email" class="form-control" placeholder="name@example.com" />
-                    </div>
+                    <label asp-for="Email" class="form-label small fw-semibold">E-posta</label>
+                    <input asp-for="Email" class="form-control form-control-sm" placeholder="E-posta adresiniz" />
                     <span asp-validation-for="Email" class="text-danger small"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Password" class="form-label">Şifre</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input asp-for="Password" type="password" class="form-control" placeholder="******" />
-                    </div>
+                    <label asp-for="Password" class="form-label small fw-semibold">Şifre</label>
+                    <input asp-for="Password" type="password" class="form-control form-control-sm" placeholder="******" />
                     <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
-                <div class="mb-3 form-check">
-                    <input asp-for="RememberMe" class="form-check-input" />
-                    <label asp-for="RememberMe" class="form-check-label">Beni Hatırla</label>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check mb-0">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label small text-muted">Beni Hatırla</label>
+                    </div>
+                    <a asp-action="ForgotPassword" class="small text-decoration-none">Şifremi Unuttum</a>
                 </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Giriş Yap</button>
-                    <a asp-action="ForgotPassword" class="btn btn-warning">Şifremi unuttum </a>
-                </div>
-                
-
+                <button type="submit" class="btn btn-primary w-100 rounded-pill mb-2">Giriş Yap</button>
+                <a asp-action="Create" class="btn btn-link btn-sm w-100 text-decoration-none text-muted">Hesap Oluştur</a>
             </form>
         </div>
-
     </div>
 </div>
 

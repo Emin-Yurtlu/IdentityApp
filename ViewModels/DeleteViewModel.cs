@@ -4,7 +4,6 @@ namespace IdentityApp.ViewModels
 {
     public class DeleteViewModel
     {
-
         [EmailAddress]
         public string? Email { get; set; }
 

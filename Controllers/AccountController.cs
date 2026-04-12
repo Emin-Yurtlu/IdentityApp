@@ -25,6 +25,7 @@ namespace IdentityApp.Controllers
             _signInManager = signInManager;
             _emailSender = emailSender;
         }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -102,7 +103,6 @@ namespace IdentityApp.Controllers
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var url = Url.Action("ConfirmEmail", "Account", new { user.Id, token });
 
-
                     await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"Lütfen email hesabınızı onaylamak ıcın linke <a href='https://localhost:7244{url}'>tıklayınız.</a>");
 
                     TempData["message"] = "Kayıt başarılı! Lütfen email adresinize gönderilen doğrulama linkine tıklayarak hesabınızı doğrulayınız.";
@@ -117,7 +117,6 @@ namespace IdentityApp.Controllers
             }
 
             return View(model);
-
         }
 
         public async Task<IActionResult> ConfirmEmail(string Id, string token)
@@ -127,6 +126,7 @@ namespace IdentityApp.Controllers
                 TempData["message"] = "Geçersiz token veya kullanıcı ID'si.";
                 return View();
             }
+
             var user = await _userManager.FindByIdAsync(Id);
             if (user != null)
             {
@@ -136,8 +136,8 @@ namespace IdentityApp.Controllers
                     TempData["message"] = "Email adresiniz başarıyla doğrulandı.";
                     return View();
                 }
-
             }
+
             TempData["message"] = "Kullanıcı bulunamadı.";
             return View();
         }
@@ -157,7 +157,6 @@ namespace IdentityApp.Controllers
         [HttpPost]
         public async Task<IActionResult> FogotPassword(string Email)
         {
-
             if (string.IsNullOrEmpty(Email))
             {
                 TempData["message"] = "Lütfen email adresinizi giriniz.";
@@ -169,7 +168,6 @@ namespace IdentityApp.Controllers
             {
                 TempData["message"] = "Bu email adresine sahip bir kullanıcı bulunamadı.";
                 return View();
-
             }
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -180,31 +178,29 @@ namespace IdentityApp.Controllers
             return View();
         }
 
-
         public IActionResult ResetPassword(string Id, string token)
         {
-
             if (Id == null || token == null)
             {
                 return RedirectToAction("Login");
             }
+
             var model = new ResetPasswordModel { Token = token };
             return View(model);
-
         }
+
         [HttpPost]
         public async Task<IActionResult> ResetPassword(string Id, ResetPasswordModel model)
         {
             if (!ModelState.IsValid)
             {
-
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if(user == null)
+                if (user == null)
                 {
-                   
                     TempData["message"] = "Bu email adresine sahip bir kullanıcı bulunamadı.";
                     return View(model);
                 }
+
                 var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
                 if (result.Succeeded)
                 {
@@ -221,7 +217,3 @@ namespace IdentityApp.Controllers
         }
     }
 }
-
-
-
-      

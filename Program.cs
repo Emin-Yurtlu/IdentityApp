@@ -4,21 +4,24 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IEmailSender,SmtpEmailSender>(x =>
+// Add services to the container.
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>(x =>
     new SmtpEmailSender(
         builder.Configuration["EmailSender:Host"],
         builder.Configuration.GetValue<int>("EmailSender:Port"),
         builder.Configuration.GetValue<bool>("EmailSender:EnableSSL"),
         builder.Configuration["EmailSender:UserName"],
         builder.Configuration["EmailSender:Password"])
-    
 );
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:DataBase"]));
-builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
+builder.Services.AddDbContext<IdentityContext>(options =>
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:DataBase"]));
+
+builder.Services.AddIdentity<AppUser, AppRole>()
+    .AddEntityFrameworkStores<IdentityContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthorization(options =>
 {
@@ -28,6 +31,7 @@ builder.Services.AddAuthorization(options =>
                 c.Type == System.Security.Claims.ClaimTypes.Role &&
                 c.Value.Trim().ToLower() == "admin")));
 });
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
@@ -38,12 +42,12 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
 
     // User settings.
-    options.User.AllowedUserNameCharacters= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = true;
 
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);   
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
-    
+
     options.SignIn.RequireConfirmedEmail = true;
 });
 
@@ -69,8 +73,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthentication();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

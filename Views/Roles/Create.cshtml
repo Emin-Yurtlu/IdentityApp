@@ -1,32 +1,28 @@
 ﻿@model AppRole
 
+@{
+    ViewData["Title"] = "Rol Oluştur";
+}
+
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
-                    <h3 class="mb-0 fw-bold">Kullanıcı Rolü Oluştur</h3>
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 450px; border-radius: 12px;">
+        <div class="card-body p-4">
+            <h4 class="text-center fw-bold text-primary mb-4">Yeni Rol Tanımla</h4>
+            
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label small fw-semibold">Rol Adı</label>
+                    <input asp-for="Name" class="form-control form-control-sm" placeholder="Örn: Admin, Editör" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
                 </div>
-                <div class="card-body p-4">
-                    <form asp-action="Create" method="post">
 
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="Name" class="form-control" placeholder="Name" />
-                            <label asp-for="Name">Name</label>
-                            <span asp-validation-for="Name" class="text-danger small"></span>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-                                <i class="bi bi-person-plus-fill me-2"></i>Kaydet
-                            </button>
-                            <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none text-muted">Vazgeç ve Listeye Dön</a>
-                        </div>
-
-                    </form>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill">Kaydet</button>
+                    <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none text-muted">Listeye Dön</a>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

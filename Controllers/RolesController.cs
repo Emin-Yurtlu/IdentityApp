@@ -16,11 +16,9 @@ namespace IdentityApp.Controllers
             _userManager = userManager;
         }
 
-      
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-          
             return View(_roleManager.Roles);
         }
 
@@ -41,23 +39,20 @@ namespace IdentityApp.Controllers
                     return RedirectToAction("Index");
                 }
 
-      
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
             }
 
-      
             return View(model);
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> Edit (string id)
+        public async Task<IActionResult> Edit(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
-            if (role != null && role.Name!=null)
+            if (role != null && role.Name != null)
             {
                 ViewBag.users = await _userManager.GetUsersInRoleAsync(role.Name);
                 return View(role);
@@ -66,9 +61,7 @@ namespace IdentityApp.Controllers
             return RedirectToAction("Index");
         }
 
-
         [HttpPost]
-
         public async Task<IActionResult> Edit(AppRole model)
         {
             if (ModelState.IsValid)
@@ -82,23 +75,20 @@ namespace IdentityApp.Controllers
                     {
                         return RedirectToAction("Index");
                     }
+
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                   if(role.Name != null)
+
+                    if (role.Name != null)
                     {
                         ViewBag.users = await _userManager.GetUsersInRoleAsync(role.Name);
                     }
                 }
             }
+
             return View(model);
-
-
         }
-
-
-
-
-        }
+    }
 }

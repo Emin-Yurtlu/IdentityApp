@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApp.Controllers
 {
-
     [Authorize(Policy = "EsnekAdmin")]
     public class UsersController : Controller
     {
@@ -19,44 +18,40 @@ namespace IdentityApp.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
         [HttpGet]
         public IActionResult Index()
         {
-           
             return View(_userManager.Users);
         }
-
-        
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            if (id==null)
+            if (id == null)
             {
                 return RedirectToAction("Index");
             }
+
             var user = await _userManager.FindByIdAsync(id);
-            if (user!=null)
+            if (user != null)
             {
-                ViewBag.Roles = await _roleManager.Roles.Select(i=> i.Name).ToListAsync();
+                ViewBag.Roles = await _roleManager.Roles.Select(i => i.Name).ToListAsync();
                 return View(new EditViewModel
                 {
                     Id = user.Id,
                     FullName = user.FullName,
                     Email = user.Email,
-                    SelectedRoles= await  _userManager.GetRolesAsync(user)
+                    SelectedRoles = await _userManager.GetRolesAsync(user)
                 });
-               
             }
+
             return RedirectToAction("Index");
         }
 
-
-
         [HttpPost]
-        public async  Task<IActionResult> Edit(string id ,EditViewModel model)
+        public async Task<IActionResult> Edit(string id, EditViewModel model)
         {
-
             if (id != model.Id)
             {
                 return RedirectToAction("Index");
@@ -64,18 +59,16 @@ namespace IdentityApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var user= await _userManager.FindByIdAsync(model.Id);
+                var user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
                     user.FullName = model.FullName;
                     user.Email = model.Email;
-                    
+
                     var result = await _userManager.UpdateAsync(user);
 
-                    if(result.Succeeded && !string.IsNullOrEmpty(model.Password))
+                    if (result.Succeeded && !string.IsNullOrEmpty(model.Password))
                     {
-
-                    
                         result = await _userManager.RemovePasswordAsync(user);
 
                         if (result.Succeeded)
@@ -93,13 +86,14 @@ namespace IdentityApp.Controllers
                         }
                         return RedirectToAction("Index");
                     }
+
                     foreach (IdentityError err in result.Errors)
                     {
                         ModelState.AddModelError("", err.Description);
                     }
                 }
-
             }
+
             return View(model);
         }
 
@@ -111,7 +105,6 @@ namespace IdentityApp.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return RedirectToAction("Index");
 
-            // AppUser'ı DeleteViewModel'e eşliyoruz (Mapping)
             var model = new DeleteViewModel
             {
                 Id = user.Id,
@@ -134,7 +127,7 @@ namespace IdentityApp.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-                // Hata varsa model state'e ekle
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
@@ -143,7 +136,5 @@ namespace IdentityApp.Controllers
 
             return View(model);
         }
-      
-
     }
 }
